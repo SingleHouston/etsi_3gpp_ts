@@ -4,7 +4,15 @@ import re
 import os
 
 # ===================== Config =====================
-BASE_URL = "https://www.etsi.org/deliver/etsi_ts/138300_138399/"
+# 定义BASE_URL为空，后续根据选择项确定所选series地址
+BASE_URL = ""
+# 定义基础URL字典：键是数字选项，值是对应URL
+URLs = {
+        "1" : "https://www.etsi.org/deliver/etsi_ts/138100_138199/",
+        "2" : "https://www.etsi.org/deliver/etsi_ts/138200_138299/",
+        "3" : "https://www.etsi.org/deliver/etsi_ts/138300_138399/"
+       }
+
 SAVE_ROOT = "./38_series"
 CHUNK_SIZE = 8192
 
@@ -98,6 +106,30 @@ def main():
     print("=" * 60)
     print("      ETSI 3GPP 38 Series Downloader (Menu Mode)")
     print("=" * 60)
+
+    # 打印所有可选的URL列表
+    print("The series to be selected are listed below:")
+    for key, url in URLs.items():
+        print(f"{key}: {url}")
+
+    # 循环获取用户输入，直到输入有效
+    while True:
+        try:
+            choice_series = input("\nEnter the nuember of the serie to download：")
+            # 判断输入是否在字典的键中
+            if choice_series in URLs:  # TODO: or choice_series == 0: download all series 
+                break
+            else:
+                print(f"Invalid input. Please enter a valid number: 0 ~ {len(URLs)} ")
+        except:
+            print(f"Invalid input. Please enter a valid number: 0 ~ {len(URLs)}")
+
+    global SAVE_ROOT
+    SAVE_ROOT = SAVE_ROOT + f"_{choice_series}00_series"
+
+    # 获取选中的URL
+    global BASE_URL
+    BASE_URL = URLs[choice_series]
 
     series_list = get_3gpp_38_series_list()
     if not series_list:
