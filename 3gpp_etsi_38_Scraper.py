@@ -53,7 +53,6 @@ def get_versions(ts_num):
         # 从完整路径中提取最后一段版本号 19.02.00_60
         folder_name = href.split("/")[-2]
         match = re.match(r'\d{2}.\d{2}.\d{2}_60', folder_name)
-        print(match)
         if match:
             versions.append((match.group(0), href))
             
@@ -118,32 +117,43 @@ def main():
         except ValueError:
             print("Invalid input. Please enter a valid number.")
 
-    if not choice == 0:
-        selected_ts = series_list[choice - 1]
-        print(f"\nSelected document: {selected_ts}")
-    else:
-        selected_ts = series_list
+    nrOfChoice = 1
+    v_choice = 0
+    ts_start_index = 0
+    # 0: select all the ts then only download the latest version (v_choice=1) for each ts.
+    if choice == 0:
+        nrOfChoice = len(series_list)
+        ts_start_index = 0
+        v_choice = 1  # only download the latest one, no need to choose 
+    else: # !0: select the specific ts whose index is choice-1
+        ts_start_index = choice - 1
 
-    version_list = get_versions(selected_ts)
-    if not version_list:
-        print("No versions found for this document.")
-        return
+    # iterate the choosed ts for both choice 0 and !0
+    for i in range(0, nrOfChoice):
+        print(f"{i}. >>>>>>> choice:{choice}, nrOfChoice:{nrOfChoice}, ts_start_index:{ts_start_index}, v_choice:{v_choice}")
+        selected_ts = series_list[ts_start_index]
+        version_list = get_versions(selected_ts)      
+        if not version_list:
+            print("No versions found for this document.")
+            return
+            
+        if v_choice == 0:  # v_choice:0 means no version selected, let user select a version
+            print("\nAvailable versions (newest first):")
+            for j, (ver, _) in enumerate(version_list, 1):
+                print(f"  {j:2d}. {ver}")
 
-    print("\nAvailable versions (newest first):")
-    for j, (ver, _) in enumerate(version_list, 1):
-        print(f"  {j:2d}. {ver}")
+            while True:
+                try:
+                    v_choice = int(input("\nEnter the number of the version to download: "))
+                    if 1 <= v_choice <= len(version_list):
+                        break
+                except ValueError:
+                    print("Invalid input. Please enter a valid number.")
 
-    while True:
-        try:
-            v_choice = int(input("\nEnter the number of the version to download: "))
-            if 1 <= v_choice <= len(version_list):
-                break
-        except ValueError:
-            print("Invalid input. Please enter a valid number.")
-
-    ver_selected, href_selected = version_list[v_choice - 1]
-    print(f"\nDownloading: {selected_ts} (Version: {ver_selected}) (href: {href_selected})")
-    download_pdf(selected_ts, ver_selected)
+        ver_selected, href_selected = version_list[v_choice - 1]
+        print(f"\nDownloading: {selected_ts} (Version: {ver_selected}) (href: {href_selected})")
+        download_pdf(selected_ts, ver_selected)
+        ts_start_index += 1
 
 if __name__ == "__main__":
     main()
