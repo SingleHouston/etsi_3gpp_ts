@@ -10,7 +10,9 @@ BASE_URL = ""
 URLs = {
         "1" : "https://www.etsi.org/deliver/etsi_ts/138100_138199/",
         "2" : "https://www.etsi.org/deliver/etsi_ts/138200_138299/",
-        "3" : "https://www.etsi.org/deliver/etsi_ts/138300_138399/"
+        "3" : "https://www.etsi.org/deliver/etsi_ts/138300_138399/",
+        "4" : "https://www.etsi.org/deliver/etsi_ts/138400_138499/",
+        "5" : "https://www.etsi.org/deliver/etsi_ts/138500_138599/"
        }
 
 SAVE_ROOT = "./38_series"
